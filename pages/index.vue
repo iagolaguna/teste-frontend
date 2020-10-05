@@ -1,41 +1,46 @@
 <template>
-  <div class="container">
-    <div>
-      <logo />
-      <h1 class="title">
-        teste-frontend
-      </h1>
-      <h2 class="subtitle">
-        Teste frontend
-      </h2>
-      <div class="links">
-        <a
-          href="https://nuxtjs.org/"
-          target="_blank"
-          class="button--green"
-        >
-          Documentation
-        </a>
-        <a
-          href="https://github.com/nuxt/nuxt.js"
-          target="_blank"
-          class="button--grey"
-        >
-          GitHub
-        </a>
-      </div>
+  <section class="container">
+    <header>
+      <h1>Missões</h1>
+    </header>
+    <p v-if="$fetchState.pending">Fetching posts...</p>
+    <p v-else-if="$fetchState.error">
+      Error while fetching posts: {{ $fetchState.error.message }}
+    </p>
+    <div v-else class="card-container">
+      <n-link
+        v-for="mission of missions"
+        :key="mission.name"
+        class="card"
+        :to="`/mission/${mission.id}`"
+      >
+        <div class="card-title">
+          {{ mission.name }}
+        </div>
+        <div class="card-body"></div>
+      </n-link>
     </div>
-  </div>
+  </section>
 </template>
 
 <script>
-import Logo from '~/components/Logo.vue'
+import Logo from "~/components/Logo.vue";
 
 export default {
+  data() {
+    return {
+      missions: [],
+    };
+  },
+  async fetch() {
+    this.missions = await this.$axios.$get(
+      "https://us-central1-teste-frontend-c2dcc.cloudfunctions.net/missions"
+    );
+  },
   components: {
-    Logo
-  }
-}
+    Logo,
+  },
+};
 </script>
 
 <style>
@@ -43,15 +48,26 @@ export default {
   margin: 0 auto;
   min-height: 100vh;
   display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
+}
+
+.card-container {
+  margin: 0 auto;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
   text-align: center;
 }
 
+.card {
+  display: flex;
+}
+
 .title {
-  font-family: 'Quicksand', 'Source Sans Pro', -apple-system, BlinkMacSystemFont,
-    'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-  display: block;
   font-weight: 300;
   font-size: 100px;
   color: #35495e;
